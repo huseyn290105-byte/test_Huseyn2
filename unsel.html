@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maktab Maslahatchisi — Test Platformasi</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-dark: #0f172a;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Auth Screen */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+
+        .icon-hat {
+            width: 70px;
+            height: 70px;
+            background: #e0f2fe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .icon-hat svg {
+            width: 36px;
+            height: 36px;
+            fill: var(--primary);
+        }
+
+        .auth-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            fill: #94a3b8;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-hover);
+        }
+
+        .author-footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        /* App Main Area */
+        #app-screen {
+            display: none;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge {
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .mode-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mode-card:hover, .mode-card.active {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .mode-card h3 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .tickets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .ticket-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ticket-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .test-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .finish-btn {
+            background: #fef2f2;
+            color: var(--danger);
+            border: 1px solid #fca5a5;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .finish-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .q-number {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .q-text {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+        }
+
+        .option:hover {
+            background: #f1f5f9;
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: #f0fdf4;
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 14px 18px;
+            background: #fffbebf5;
+            border-left: 4px solid var(--warning);
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .btn-sec {
+            background: #e2e8f0;
+            color: var(--text);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .result-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-grade {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="auth-container">
+        <div class="auth-card">
+            <div class="icon-hat">
+                <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z M5 13.18v4l7 3.82 7-3.82v-4L12 17l-7-3.82z"/></svg>
+            </div>
+            <h2>Maktab Maslahatchisi</h2>
+            <p>Test va Baholash Platformasi (800 ta test)</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label>LOGIN</label>
+                    <div class="input-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <input type="text" id="username" placeholder="Loginni kiriting" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>PAROL</label>
+                    <div class="input-wrapper">
+                        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                        <input type="password" id="password" placeholder="Parolni kiriting" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    Platformaga Kirish ➔
+                </button>
+                
+                <div class="author-footer">
+                    Raximboyev Huseyn
+                </div>
+
+                <div id="error-msg" class="error-msg">Login yoki parol noto'g'ri!</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="app-screen">
+        <header>
+            <h3>Maktab Maslahatchisi — Platforma</h3>
+            <div class="user-info">
+                <span class="user-badge" id="user-display">Raximboyev Huseyn</span>
+                <button class="logout-btn" onclick="logout()">Chiqish</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="mode-selection" id="mode-box">
+                <div class="mode-card active" onclick="switchMode('ticket')">
+                    <h3>20 ta Bilet Rejimi</h3>
+                    <p>800 ta test 40 tadan bo'lingan (1-20 biletlar)</p>
+                </div>
+                <div class="mode-card" onclick="startRandom30()">
+                    <h3>Tasodifiy 30 ta Test</h3>
+                    <p>30 ta yangi va qaytarilmas testlar yechish</p>
+                </div>
+            </div>
+
+            <!-- Biletlar Ro'yxati -->
+            <div id="tickets-view">
+                <h4 style="margin-bottom: 14px;">Biletni tanlang:</h4>
+                <div class="tickets-grid" id="tickets-grid"></div>
+            </div>
+
+            <!-- Test Area -->
+            <div id="test-view" style="display: none;">
+                <div class="test-card">
+                    <div class="test-header">
+                        <span class="q-number" id="q-number">Savol 1 / 30</span>
+                        <button class="finish-btn" onclick="finishTest()">Testni tugatish ✖</button>
+                    </div>
+
+                    <div class="q-text" id="q-text">Savol yuklanmoqda...</div>
+                    <div class="options" id="options-box"></div>
+
+                    <div class="explanation" id="exp-box">
+                        <strong>Sharh / Tushuntirish:</strong> <span id="exp-text"></span>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn-sec" onclick="prevQuestion()">Oldingisi</button>
+                        <button class="btn-login" style="width: auto; padding: 10px 24px; margin: 0;" onclick="nextQuestion()">Keyingisi ➔</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result View -->
+            <div id="result-view" class="result-card">
+                <h2>Test Yakunlandi!</h2>
+                <div class="result-grade" id="result-grade">🌟 Qoyil!</div>
+                <div class="result-score" id="result-score">Natija: 27 / 30 (90%)</div>
+                <button class="btn-login" style="width: 220px; margin: 20px auto 0;" onclick="backToMenu()">Bosh menyuga qaytish</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const totalDatabase = Array.from({ length: 800 }, (_, i) => ({
+            id: i + 1,
+            question: `${i + 1}-savol: Maktab maslahatchisining faoliyatiga oid tegishli uslubiy savol va uning javob varianti mashqi.`,
+            options: [
+                "Tashkiliy va pedagogik yondashuv hamda rejalashtirish",
+                "O'quvchilar bilan individual ishlash tartibi",
+                "Kasbga yo'naltirish va diagnostika ishlari",
+                "Davlat ta'lim standartlari me'yorlari"
+            ],
+            correct: 0,
+            explanation: `${i + 1}-savol uchun qisqacha uslubiy tushuntirish berilgan.`
+        }));
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {};
+        let workedQuestionIds = JSON.parse(localStorage.getItem('worked_questions') || '[]');
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if (u === 'huseyn29' && p === 'Huseyn05') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'block';
+                renderTickets();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        });
+
+        function logout() { location.reload(); }
+
+        function switchMode(mode) {
+            document.getElementById('tickets-view').style.display = 'block';
+            document.getElementById('test-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'none';
+        }
+
+        function renderTickets() {
+            const grid = document.getElementById('tickets-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 20; i++) {
+                const btn = document.createElement('div');
+                btn.className = 'ticket-btn';
+                btn.innerHTML = `<strong>${i}-Bilet</strong><br><small style="color:var(--text-muted);">${(i-1)*40+1}-${i*40}</small>`;
+                btn.onclick = () => startTicket(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        function startTicket(ticketNum) {
+            const start = (ticketNum - 1) * 40;
+            currentQuestions = totalDatabase.slice(start, start + 40);
+            initTest();
+        }
+
+        function startRandom30() {
+            let available = totalDatabase.filter(q => !workedQuestionIds.includes(q.id));
+            if (available.length < 30) available = totalDatabase;
+            const shuffled = [...available].sort(() => 0.5 - Math.random());
+            currentQuestions = shuffled.slice(0, 30);
+            initTest();
+        }
+
+        function initTest() {
+            currentIndex = 0;
+            userAnswers = {};
+            document.getElementById('tickets-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'none';
+            document.getElementById('test-view').style.display = 'block';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = currentQuestions[currentIndex];
+            document.getElementById('q-number').innerText = `Savol ${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('q-text').innerText = q.question;
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            const expBox = document.getElementById('exp-box');
+            expBox.style.display = 'none';
+
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerText = `${String.fromCharCode(65 + idx)}) ${opt}`;
+
+                if (userAnswers[currentIndex] !== undefined) {
+                    if (idx === q.correct) div.classList.add('correct');
+                    if (userAnswers[currentIndex] === idx && idx !== q.correct) div.classList.add('incorrect');
+                }
+
+                div.onclick = () => selectOption(idx);
+                box.appendChild(div);
+            });
+
+            if (userAnswers[currentIndex] !== undefined) {
+                document.getElementById('exp-text').innerText = q.explanation;
+                expBox.style.display = 'block';
+            }
+        }
+
+        function selectOption(idx) {
+            if (userAnswers[currentIndex] !== undefined) return;
+            userAnswers[currentIndex] = idx;
+            const q = currentQuestions[currentIndex];
+            if (!workedQuestionIds.includes(q.id)) {
+                workedQuestionIds.push(q.id);
+                localStorage.setItem('worked_questions', JSON.stringify(workedQuestionIds));
+            }
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                finishTest();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function finishTest() {
+            let correctCount = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) correctCount++;
+            });
+
+            const total = currentQuestions.length;
+            const percent = Math.round((correctCount / total) * 100);
+
+            let gradeText = "";
+            if (percent >= 90) gradeText = "🌟 Qoyil!";
+            else if (percent >= 80) gradeText = "👍 Zo'r!";
+            else if (percent >= 70) gradeText = "👌 Yaxshi";
+            else if (percent >= 60) gradeText = "🙂 Qanoatlanarli";
+            else gradeText = "❌ Yomon";
+
+            document.getElementById('test-view').style.display = 'none';
+            document.getElementById('result-view').style.display = 'block';
+            document.getElementById('result-grade').innerText = gradeText;
+            document.getElementById('result-score').innerText = `To'g'ri javoblar: ${correctCount} / ${total} (${percent}%)`;
+        }
+
+        function backToMenu() { switchMode('ticket'); }
+    </script>
+</body>
+</html>
